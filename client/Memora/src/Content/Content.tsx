@@ -9,7 +9,8 @@ export interface Contenttype {
     image ?: string,
     content?: string,
     tags : string[],
-    date ?: string
+    date ?: string,
+    delete ():void
 }
 
 const svg_links = {
@@ -26,7 +27,7 @@ export default function Content(props : Contenttype){
         <div className="w-60 h-80 rounded-lg border-1 border-gray-600 shadow">
             <div className="flex gap-1 mt-3 pl-3 text-black hover:cursor-default">
                 <div>
-                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d={svg_links[props.type]}/>
                     </svg>
                 </div>
@@ -64,8 +65,7 @@ export default function Content(props : Contenttype){
             </div>
 
             <div className="flex flex-wrap gap-1 ml-3 w-53 mt-2">
-                {props.tags.map(tag=><div className="bg-purple-500/15 text-purple-500 rounded-3xl p-1 text-sm hover:cursor-default">#{tag}</div>)}
-        
+                {props.tags.map(tag=><div className="bg-purple-500/15 text-purple-500 rounded-3xl pl-1 pr-1 text-sm hover:cursor-default">#{tag}</div>)}
             </div>
         </div>
     )

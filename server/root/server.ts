@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
-import { string, z } from "zod"
+import { z } from "zod"
 import { usermodel } from "./db"
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken"
@@ -155,7 +155,7 @@ app.post('/add-content',check_auth, async(req,res)=>{
 
 })
 
-app.post('/fetch-docs',check_auth, async(req,res)=>{
+app.get('/fetch-docs',check_auth, async(req,res)=>{
 
     const token = req.headers.token as string;
     const decoded = jwt.verify(token, JWT_SECRET) as {username : string};
@@ -191,7 +191,7 @@ app.post('/fetch-docs',check_auth, async(req,res)=>{
 })
 
 
-app.post('/delete-doc', check_auth, async (req, res) => {
+app.delete('/delete-doc', check_auth, async (req, res) => {
 
     const token = req.headers.token as string;
     const decoded = jwt.verify(token, JWT_SECRET) as {username : string};
