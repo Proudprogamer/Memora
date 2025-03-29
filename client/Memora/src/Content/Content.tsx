@@ -59,7 +59,7 @@ export default function Content(props : Contenttype){
                 ):
                 (
                     <div className="ml-6 mt-5 w-49">
-                        <li className="text-black">{props.content}</li>
+                        <li className="text-black" key={props.title}>{props.content}</li>
                     </div>
                 )}
             </div>

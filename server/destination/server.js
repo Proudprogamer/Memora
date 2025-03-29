@@ -19,9 +19,11 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const db_2 = require("./db");
 const mongodb_1 = require("mongodb");
+const cors_1 = __importDefault(require("cors"));
 const JWT_SECRET = "abcdefghijklmnopqrstuvwxyz1234567HDIAUENBAPPOEQUTVML";
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+app.use((0, cors_1.default)());
 app.post('/', (req, res) => {
     console.log("home page!");
 });
@@ -61,8 +63,11 @@ const check_auth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 app.post('/sign-up', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const username = req.body.username;
-    const password = req.body.password;
+    const data = JSON.stringify(req.body);
+    let userdata = JSON.parse(data);
+    console.log("received request : " + userdata.username + " " + userdata.password);
+    const username = userdata.username;
+    const password = userdata.password;
     const details = {
         username: username,
         password: password
@@ -129,7 +134,7 @@ app.post('/add-content', check_auth, (req, res) => __awaiter(void 0, void 0, voi
         });
     }
 }));
-app.post('/fetch-docs', check_auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get('/fetch-docs', check_auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.headers.token;
     const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
     if (decoded.username == req.body.username) {
@@ -153,7 +158,7 @@ app.post('/fetch-docs', check_auth, (req, res) => __awaiter(void 0, void 0, void
         });
     }
 }));
-app.post('/delete-doc', check_auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.delete('/delete-doc', check_auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.headers.token;
     const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
     if (decoded.username == req.body.username) {

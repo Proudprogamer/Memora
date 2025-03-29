@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken"
 import { contentModel } from "./db";
 import { ObjectId } from "mongodb";
+import cors from "cors";
 
 
 const JWT_SECRET= "abcdefghijklmnopqrstuvwxyz1234567HDIAUENBAPPOEQUTVML"
@@ -12,6 +13,7 @@ const JWT_SECRET= "abcdefghijklmnopqrstuvwxyz1234567HDIAUENBAPPOEQUTVML"
 const app = express();
 app.use(express.json())
 
+app.use(cors());
 
 app.post('/', (req : Request,res : Response)=>{
     console.log("home page!");
@@ -63,8 +65,16 @@ const check_auth = async(req :Request,res : Response,next : NextFunction)=>{
 
 app.post('/sign-up', async(req : Request,res : Response)=>{
 
-    const username = req.body.username;
-    const password = req.body.password;
+    
+    const data = JSON.stringify(req.body);
+
+    let userdata = JSON.parse(data);
+
+
+    console.log("received request : " + userdata.username + " " + userdata.password)
+
+    const username = userdata.username;
+    const password = userdata.password;
 
     const details = {
         username : username,
