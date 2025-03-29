@@ -58,6 +58,38 @@ export default function Authpopup(props:Newuser){
         }
         else if(props.type=="Sign In")
         {
+
+            try{
+                const response = await axios.post("http://localhost:3000/sign-in",
+                    {
+                        username : userName,
+                        password : passWord
+                    },
+                    {
+                        headers:{
+                            "Content-Type" :"application/json"
+                        }
+                    }
+                )
+
+                if(response.data)
+                {
+                    const token = response.data.token
+
+                    console.log("response data :" +response.data.token)
+                    
+                    setisLoading(false);
+
+                    localStorage.setItem("token",token);
+
+                    navigate('/');
+                    console.log("user signed in!");
+                }
+
+            }catch(e)
+            {
+                console.log("there was an error : " +e);
+            }
             
         }
 

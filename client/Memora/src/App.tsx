@@ -10,27 +10,29 @@ function App() {
   const navigate = useNavigate();
 
   let[loading, setloading] = useState(false);
+  let[token, settoken] = useState<string | null>();
 
-  // useEffect(() =>{
+  useEffect(() =>{
+    settoken(localStorage.getItem("token"))
 
-  //   const get_content = async() =>{
+    // const get_content = async() =>{
 
-  //     try{
-  //         const response = await axios.get("http://localhost:3000/sign-up",
-  //         {
-  //           headers :{
-  //             "Content-Type" : "application/json"
-  //           }
-  //         }
-  //       )
+    //   try{
+    //       const response = await axios.get("http://localhost:3000/sign-up",
+    //       {
+    //         headers :{
+    //           "Content-Type" : "application/json"
+    //         }
+    //       }
+    //     )
 
-  //     }
-  //     catch(error)
-  //     {
-  //       console.log(`There was an error ${error}`)
-  //     }
-  //   }
-  // },[])
+    //   }
+    //   catch(error)
+    //   {
+    //     console.log(`There was an error ${error}`)
+    //   }
+    // }
+  },[])
 
   return (
     <>
@@ -43,10 +45,22 @@ function App() {
             </div>
           </div>
 
-          <div className="pl-205 mt-9 ">
-            <button onClick={()=>navigate('/sign-up')} className="font-semibold transition-all duration-0500 text-black bg-black/20 rounded-lg p-2 hover:bg-black hover:text-white mr-2">Sign Up</button>
-            <button onClick={()=>navigate('/sign-in')} className="font-semibold transition-all duration-0500 text-black bg-black/20 rounded-lg p-2 hover:bg-black hover:text-white">Sign In</button>
-          </div>
+          {!token ?(
+
+            <div className="pl-205 mt-9 ">
+              <button onClick={()=>navigate('/sign-up')} className="font-semibold transition-all duration-0500 text-black bg-black/20 rounded-lg p-2 hover:bg-black hover:text-white mr-2">Sign Up</button>
+              <button onClick={()=>navigate('/sign-in')} className="font-semibold transition-all duration-0500 text-black bg-black/20 rounded-lg p-2 hover:bg-black hover:text-white">Sign In</button>
+            </div>
+          ):
+          (
+            <div className="pl-205 mt-9 ">
+              <button onClick={()=>{localStorage.removeItem("token");
+                settoken(null);
+              }} className="font-semibold transition-all duration-0500 text-black bg-black/20 rounded-lg p-2 hover:bg-black hover:text-white">Log Out</button>
+            </div>
+
+          ) }
+
         </div>
     </>
   )
