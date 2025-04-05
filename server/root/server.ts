@@ -182,7 +182,7 @@ app.post('/add-content', check_auth, async (req, res) => {
 });
 
 
-app.get('/fetch-docs',check_auth, async(req,res)=>{
+app.post('/fetch-docs',check_auth, async(req,res)=>{
 
     const token = req.headers.token as string;
     const decoded = jwt.verify(token, JWT_SECRET) as {username : string};

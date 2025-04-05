@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar/Sidebar";
 import Content from "./Content/Content";
 import axios from "axios"
+import { username } from "./Auth/Authpopup";
 import { useNavigate } from "react-router-dom";
+import { content } from "./NewContent/NewContent";
 
 
 function App() {
@@ -10,29 +12,33 @@ function App() {
   const navigate = useNavigate();
 
   let[loading, setloading] = useState(false);
-  let[token, settoken] = useState<string | null>();
+  let[token, settoken] = useState<string | null>(localStorage.getItem("token"));
+  let[userContent, setuserContent] = useState<content[]>([]);
 
-  useEffect(() =>{
-    settoken(localStorage.getItem("token"))
-
-    // const get_content = async() =>{
-
-    //   try{
-    //       const response = await axios.get("http://localhost:3000/sign-up",
-    //       {
-    //         headers :{
-    //           "Content-Type" : "application/json"
-    //         }
-    //       }
-    //     )
-
-    //   }
-    //   catch(error)
-    //   {
-    //     console.log(`There was an error ${error}`)
-    //   }
-    // }
-  },[])
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (token) {
+          const response = await axios.post("http://localhost:3000/fetch-docs",
+            {username : username}
+            ,
+            {
+              headers : {
+                "Content-Type" : "application/json",
+                "token" : localStorage.getItem("token")
+              }
+            }
+          );
+          console.log(response.data.data);
+          setuserContent(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, [token]); 
 
   return (
     <>
@@ -41,8 +47,18 @@ function App() {
           <div className="ml-10 mt-9">
             <p className="text-3xl font-bold mb-15">All Notes</p>
             <div className="text-green-500 text-5lg mt-5">
-              <Content tags={["productivity","ideas"]} subtitle="Future Projects" title="Future projects" type="document" image="" content="go to the gym everyday and be the best version of yourself"/>
-            </div>
+            {userContent.map((item, index) => (
+              <Content
+                key={index}
+                tags={item.content.tags}
+                subtitle={item.content.sub_title}
+                title={item.content.title}
+                type={item.content.type}
+                content={item.content.description}
+                 // optional based on what `Content` expects
+              />
+            ))}
+          </div>
           </div>
 
           {!token ?(

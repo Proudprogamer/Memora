@@ -3,6 +3,16 @@ import axios from "axios";
 import { username } from "../Auth/Authpopup";
 
 
+export interface content{
+    username : String,
+    type: String,
+    link: String, 
+    title: String, 
+    sub_title: String,
+    description : String,
+    tags: String
+}
+
 function NewContent(){
 
     const [selectedTags, setSelectedTags] = useState<String[]>([]);

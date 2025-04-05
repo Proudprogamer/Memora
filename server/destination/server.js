@@ -158,7 +158,7 @@ app.post('/add-content', check_auth, (req, res) => __awaiter(void 0, void 0, voi
         });
     }
 }));
-app.get('/fetch-docs', check_auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/fetch-docs', check_auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.headers.token;
     const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
     if (decoded.username == req.body.username) {
