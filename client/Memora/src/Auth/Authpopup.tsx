@@ -2,10 +2,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 export interface Newuser{
     type :"Sign Up" | "Sign In",
 }
+
+export let username : String="";
 
 export default function Authpopup(props:Newuser){
 
@@ -74,6 +75,9 @@ export default function Authpopup(props:Newuser){
 
                 if(response.data)
                 {
+                    username = userName;
+
+
                     const token = response.data.token
 
                     console.log("response data :" +response.data.token)

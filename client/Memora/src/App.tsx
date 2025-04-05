@@ -53,11 +53,17 @@ function App() {
             </div>
           ):
           (
-            <div className="pl-205 mt-9 ">
-              <button onClick={()=>{localStorage.removeItem("token");
+           
+            <div className="pl-190 mt-9 flex gap-2 h-10">
+              <button onClick={()=>{
+                navigate('/add-content');
+              }} className="font-semibold transition-all duration-0500 text-black bg-black/20 rounded-lg p-2 hover:bg-black hover:text-white w-30">Add Content</button>
+              <button onClick={()=>{
+                localStorage.removeItem("token");
                 settoken(null);
               }} className="font-semibold transition-all duration-0500 text-black bg-black/20 rounded-lg p-2 hover:bg-black hover:text-white">Log Out</button>
             </div>
+            
 
           ) }
 

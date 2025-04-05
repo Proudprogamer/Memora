@@ -124,46 +124,63 @@ app.post('/sign-in',auth, async(req : Request,res : Response)=>{
 
 })
 
-app.post('/add-content',check_auth, async(req,res)=>{
+app.post('/add-content', check_auth, async (req, res) => {
+    console.log("Received request body:", req.body);
+    console.log("Received token:", req.headers.token);
 
     const token = req.headers.token as string;
-    const decoded = jwt.verify(token, JWT_SECRET) as {username : string};
-    if(decoded.username == req.body.username)
-    {
-        
-        const userdata = await usermodel.findOne({username : decoded.username}).catch(()=>{
-            res.status(411).json({message : "There was an error in finding the user!"});
-        })
-        //console.log(userdata);
-        
-        if(userdata)
-        {
-            await contentModel.create({
-                username : userdata._id,
-                content : {
-                    type: req.body.type,
-                    link: req.body.link,
-                    title: req.body.title,
-                    tags: req.body.tags
-                }
-            }).then(()=>{
-                res.status(200).json({message : "Content added!"})
-            }).catch(()=>{
-                res.status(411).json({
-                    message : "There was an error in adding content"
-                })
-            })
+
+    let decoded;
+    try {
+        decoded = jwt.verify(token, JWT_SECRET) as { username: string };
+        console.log("Decoded token:", decoded);
+    } catch (err) {
+        console.error("JWT verification failed:", err);
+        res.status(411).json({ message: "user not verified!" });
+        return;
+    }
+
+    if (decoded.username == req.body.username) {
+        let userdata;
+        try {
+            userdata = await usermodel.findOne({ username: decoded.username });
+            console.log("User data:", userdata);
+        } catch (err) {
+            console.error("Error finding user:", err);
+            res.status(411).json({ message: "There was an error in finding the user!" });
+            return;
         }
 
-    }
-    else{
+        if (userdata) {
+            try {
+                await contentModel.create({
+                    username: userdata.username,
+                    content: {
+                        type: req.body.type,
+                        link: req.body.link,
+                        title: req.body.title,
+                        sub_title: req.body.sub_title,
+                        description: req.body.description,
+                        tags: req.body.tags
+                    }
+                });
+                console.log("Content added successfully!");
+                res.status(200).json({ message: "Content added!" });
+            } catch (err) {
+                console.error("Error adding content:", err);
+                res.status(411).json({
+                    message: "There was an error in adding content"
+                });
+            }
+        }
+    } else {
+        console.warn("Username in token does not match request body:", decoded.username, req.body.username);
         res.status(411).json({
-            message : "user not verified!"
-        })
+            message: "user not verified!"
+        });
     }
-    
+});
 
-})
 
 app.get('/fetch-docs',check_auth, async(req,res)=>{
 
@@ -177,7 +194,7 @@ app.get('/fetch-docs',check_auth, async(req,res)=>{
         })
         if(user)
         {
-            const userdata = await contentModel.find({username : user._id}).catch(()=>{
+            const userdata = await contentModel.find({username : user.username}).catch(()=>{
                 res.status(411).json("There was an error in finding the user content!");
             })
 
@@ -194,9 +211,6 @@ app.get('/fetch-docs',check_auth, async(req,res)=>{
             message : "user not verified!"
         })
     }
-
-
-    
 
 })
 

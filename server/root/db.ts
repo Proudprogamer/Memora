@@ -7,12 +7,14 @@ const userSchema = new Schema({
 });
 
 const contentSchema = new Schema({
-  username : {type : mongoose.Schema.Types.ObjectId, required : true},
+  username : {type : String, required : true, unique:false},
   content : {
     type: new Schema({ // Use nested Schema correctly
       type: { type: String, required: true }, 
       link: { type: String, required: true }, 
       title: { type: String, required: true }, 
+      sub_title: { type: String, required: true },
+      description:{ type: String, required: true},
       tags: { type: [String], required: true } // Ensure tags array is required
     }),
     required: true

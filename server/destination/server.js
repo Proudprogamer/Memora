@@ -103,32 +103,56 @@ app.post('/sign-in', auth, (req, res) => __awaiter(void 0, void 0, void 0, funct
     });
 }));
 app.post('/add-content', check_auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Received request body:", req.body);
+    console.log("Received token:", req.headers.token);
     const token = req.headers.token;
-    const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
+    let decoded;
+    try {
+        decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
+        console.log("Decoded token:", decoded);
+    }
+    catch (err) {
+        console.error("JWT verification failed:", err);
+        res.status(411).json({ message: "user not verified!" });
+        return;
+    }
     if (decoded.username == req.body.username) {
-        const userdata = yield db_1.usermodel.findOne({ username: decoded.username }).catch(() => {
+        let userdata;
+        try {
+            userdata = yield db_1.usermodel.findOne({ username: decoded.username });
+            console.log("User data:", userdata);
+        }
+        catch (err) {
+            console.error("Error finding user:", err);
             res.status(411).json({ message: "There was an error in finding the user!" });
-        });
-        //console.log(userdata);
+            return;
+        }
         if (userdata) {
-            yield db_2.contentModel.create({
-                username: userdata._id,
-                content: {
-                    type: req.body.type,
-                    link: req.body.link,
-                    title: req.body.title,
-                    tags: req.body.tags
-                }
-            }).then(() => {
+            try {
+                yield db_2.contentModel.create({
+                    username: userdata.username,
+                    content: {
+                        type: req.body.type,
+                        link: req.body.link,
+                        title: req.body.title,
+                        sub_title: req.body.sub_title,
+                        description: req.body.description,
+                        tags: req.body.tags
+                    }
+                });
+                console.log("Content added successfully!");
                 res.status(200).json({ message: "Content added!" });
-            }).catch(() => {
+            }
+            catch (err) {
+                console.error("Error adding content:", err);
                 res.status(411).json({
                     message: "There was an error in adding content"
                 });
-            });
+            }
         }
     }
     else {
+        console.warn("Username in token does not match request body:", decoded.username, req.body.username);
         res.status(411).json({
             message: "user not verified!"
         });
@@ -142,7 +166,7 @@ app.get('/fetch-docs', check_auth, (req, res) => __awaiter(void 0, void 0, void 
             res.status(411).json({ message: "There was an error in finding the user!" });
         });
         if (user) {
-            const userdata = yield db_2.contentModel.find({ username: user._id }).catch(() => {
+            const userdata = yield db_2.contentModel.find({ username: user.username }).catch(() => {
                 res.status(411).json("There was an error in finding the user content!");
             });
             if (!userdata)
